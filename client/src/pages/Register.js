@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Form from '../components/Form';
-import { userRegister } from '../api calls/users';
+import { userRegister, } from '../api calls/users';
 
 function Register() {
-  const handleSubmit = async (formData) => {
+  const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
+
+  const handleSubmit = async (data) => {
     try {
-      const response = await userRegister(formData);
+      const response = await userRegister(data);
       if (response && response.success) {
         console.log(response.message);
-        window.location.href = "/update_profile";
+        setFormData(data);
+        navigate('/home', { state: { formData: data } });
       } else {
         console.log(response.message);
       }

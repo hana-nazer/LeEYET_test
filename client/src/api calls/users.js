@@ -9,3 +9,13 @@ export const userRegister = async (payload) => {
     return error.response;
   }
 };
+
+export const updateUserProfile = async (id, payload) => {
+  try {
+    const response = await api.put(`/users/${id}`, payload);
+    return response.data;
+  } catch (error) {
+    console.log(error.response);
+    return error.response;
+  }
+};

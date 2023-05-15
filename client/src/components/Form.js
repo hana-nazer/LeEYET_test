@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import styles from "./FormStyles.module.css";
-import validateForm from "./Validation";
+// Form.js
+import React, { useState } from 'react';
+import styles from './FormStyles.module.css';
+import validateForm from './Validation';
 
 const Form = (props) => {
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [address, setAddress] = useState("");
+  const [name, setName] = useState(props.formData?.name || '');
+  const [password, setPassword] = useState(props.formData?.password || '');
+  const [address, setAddress] = useState(props.formData?.address || '');
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (event) => {
@@ -72,11 +73,10 @@ const Form = (props) => {
           <button type="submit" className={styles.button}>
             Submit
           </button>
-          </form>
+        </form>
       </div>
     </div>
   );
 };
 
 export default Form;
-
