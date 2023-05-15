@@ -1,7 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+require("dotenv").config();
+const bcrypt = require("bcrypt");
+const User = require("./models/userModel");
 
 const app = express();
 
@@ -21,10 +23,59 @@ mongoose
     console.error("Error connecting to MongoDB database", err);
   });
 
+app.post("/register", async (req, res) => {
+  try {
+    const { name, password, address } = req.body;
 
-// Define routes
-app.get('/', (req, res) => {
-  res.send('Welcome to the MEARN server!');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = new User({
+      name,
+      password: hashedPassword,
+      address,
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json({ message: "Error registering user" });
+  }
+});
+
+app.put("/users/:id", async (req, res) => {
+  try {
+    const { name, address, password } = req.body;
+    const { id } = req.params;
+
+    // Find the user by ID
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update user information
+    user.name = name;
+    user.address = address;
+
+    // Check if the password needs to be updated
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    // Save the updated user to the database
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Error updating user" });
+  }
 });
 
 // Start the server
