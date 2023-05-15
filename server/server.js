@@ -7,7 +7,12 @@ const User = require("./models/userModel");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: process.env.CORS_CREDENTIALS === "true", // Whether to allow cookies to be sent along with the request
+    origin: process.env.CORS_ORIGIN, // The origin(s) from which requests are allowed, specified as a string or an array of strings
+  })
+);
 app.use(express.json());
 
 // Connect to MongoDB
@@ -39,10 +44,10 @@ app.post("/register", async (req, res) => {
     // Save the user to the database
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({ success: true, message: "User registered successfully" });
   } catch (error) {
     console.error("Error registering user:", error);
-    res.status(500).json({ message: "Error registering user" });
+    res.status(500).json({ success: false, message: "Error registering user" });
   }
 });
 
@@ -55,7 +60,7 @@ app.put("/users/:id", async (req, res) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     // Update user information
@@ -71,10 +76,10 @@ app.put("/users/:id", async (req, res) => {
     // Save the updated user to the database
     await user.save();
 
-    res.status(200).json({ message: "User updated successfully" });
+    res.status(200).json({ success: true, message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Error updating user" });
+    res.status(500).json({ success: false, message: "Error updating user" });
   }
 });
 

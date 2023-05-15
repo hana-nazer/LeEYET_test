@@ -19,6 +19,11 @@ const Form = (props) => {
       setErrors(validationErrors);
       return;
     }
+
+    // Call the callback function passed as prop with the form data
+    if (props.onSubmit) {
+      props.onSubmit({ name, password, address });
+    }
   };
 
   return (
@@ -67,10 +72,11 @@ const Form = (props) => {
           <button type="submit" className={styles.button}>
             Submit
           </button>
-        </form>
+          </form>
       </div>
     </div>
   );
 };
 
 export default Form;
+
